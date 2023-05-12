@@ -5,6 +5,7 @@
 #include "optimizer.h"
 
 // parameter to adjust for steepest descent
+// TODO - could still be tweaked
 const double ETA = 1.0;
 const double THRESHOLD_NORM = 0.003;
 const double STEPSIZE_GEOM = 0.1;
@@ -28,7 +29,7 @@ rhf(mol, solver_threshold),
 uhf(mol, solver_threshold), 
 solver(nullptr), 
 mol(mol) {
-    // set solver type
+    // set solver type dyamically
     switch (solver_type) {
         case 0:
             solver = &rhf;
@@ -48,12 +49,16 @@ Optimizer::~Optimizer() {}
 // PROTECTED
 // #########
 
+// optimizer objective function definition
+// should be defined for every optimizer separately
 double Optimizer::objective() {
     return 0.0;
 }
 
+// function to print current state of optimization
 void Optimizer::callback() {}
 
+// function to print out final results
 void Optimizer::results() {}
 
 // optimize parameter set with steepest descent algorithm

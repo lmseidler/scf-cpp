@@ -1,7 +1,6 @@
 #include <iostream>
 #include <tuple>
 #include <cmath>
-// #include <chrono>
 
 #include "eigen-3.4.0/Eigen/Dense"
 
@@ -102,7 +101,7 @@ std::array<double, 3> Solver::oneint_prim(int a, int b) {
             double a_p = a_i + a_j; 
             double d_ij =  basis[a]->d_set[i] * basis[b]->d_set[j];
 
-            // calculate overlap SUS
+            // calculate overlap
             s = d_ij * std::exp(-r_ab * (a_i * a_j) / a_p) * std::pow(std::sqrt(M_PI / a_p), 3);
             stv[0] += s;
 
@@ -169,7 +168,7 @@ void Solver::oneint() {
 
 // executes the loop over all primitives of four CGTOs a, b, c, d
 // returns the interaction energy
-// TODO - implement __m256 ??
+// TODO - implement vectorization (__m256)
 // TODO - compiler flags
 double Solver::twoint_prim(int a, int b, int c, int d) {
 
@@ -275,10 +274,7 @@ RHFSolver::RHFSolver(const Molecule &mol, double threshold) : Solver(mol, thresh
 double RHFSolver::run(bool verbose) {
     // calculate 1e and 2e integrals
     oneint();
-    //auto t1 = std::chrono::high_resolution_clock::now();
     twoint();
-    //auto t2 = std::chrono::high_resolution_clock::now();
-    //TWOINT_TIMINGS += std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
 
     // calculate classical nuclear-nuclear interaction
     if (verbose) {
@@ -325,10 +321,7 @@ double RHFSolver::run(bool verbose) {
 
         // build new fock and orthogonalize
         // also build new density matrix
-        // t1 = std::chrono::high_resolution_clock::now();
         new_fock();
-        // t2 = std::chrono::high_resolution_clock::now();
-        // NEWFOCK_TIMINGS += std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
         
         // get new energy
         e = energy();
@@ -348,8 +341,6 @@ double RHFSolver::run(bool verbose) {
         std::cout << "Mulliken charges:" << std::endl;
         mulliken();
     }
-    //std::cout << "Timings" << std::endl;
-    //std::cout << "twoint: " << TWOINT_TIMINGS << std::endl;
     return e;
 }
 
@@ -464,10 +455,7 @@ UHFSolver::UHFSolver(const Molecule &mol, double threshold) : Solver(mol, thresh
 double UHFSolver::run(bool verbose) {
     // calculate 1e and 2e integrals
     oneint();
-    // auto t1 = std::chrono::high_resolution_clock::now();
     twoint();
-    // auto t2 = std::chrono::high_resolution_clock::now();
-    // TWOINT_TIMINGS += std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
 
     // calculate classical nuclear-nuclear interaction
     if (verbose) {
@@ -525,10 +513,7 @@ double UHFSolver::run(bool verbose) {
 
         // build new fock and orthogonalize
         // also build new density matrix
-        // t1 = std::chrono::high_resolution_clock::now();
         new_fock();
-        // t2 = std::chrono::high_resolution_clock::now();
-        // NEWFOCK_TIMINGS += std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
         
         // get new energy
         e = energy();
@@ -552,9 +537,6 @@ double UHFSolver::run(bool verbose) {
         std::cout << "\nSpin expectation value: " << spin_exp << std::endl;
         std::cout << "Calculated spin: " << spin_calc << std::endl;
     }
-    /* std::cout << "Timings" << std::endl;
-    std::cout << "twoint: " << TWOINT_TIMINGS << std::endl;
-    std::cout << "newfock: " << NEWFOCK_TIMINGS << std::endl; */
     return e;
 }
 
@@ -671,7 +653,8 @@ void UHFSolver::guess() {
     dens_init();
 }
 
-// calculate spin contamination value TODO
+// calculate spin contamination value
+// TODO - there seems to be a slight deviation from reference values
 double UHFSolver::contamination() {
     double cont = mol.nel_bet;
 

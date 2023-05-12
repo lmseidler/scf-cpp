@@ -11,15 +11,8 @@
 /*
 stores exponents for all elements 
 DOI: 10.1063/1.1672702
-
-struct for basis function
-
-expand_slater:
-    check qn consistency (n <= 6, |l| <= n)
-    no negative exponents
-    expand orbital into given number of gaussians
-    normalize gaussian
 */
+
 // basis set exponents for STO-6G
 const double AVALS_6[15][6] = {
     {2.310303149e+1, 4.235915534e+0, 1.185056519e+0, 4.070988982e-1, 1.580884151e-1, 6.510953954e-2}, // s  
@@ -62,6 +55,8 @@ const int DFACT[8] = {1, 1, 3, 15, 105, 945, 10395, 135135};
 
 // BasisFunction
 
+// expand the basis function with STO zeta value 'zeta' into a CGTO with nprim gaussians
+// currently this only supports nprim = 6 because of the hardcoded data above
 void BasisFunction::expand_slater(int nprim) {
     int select;
     switch (l) {

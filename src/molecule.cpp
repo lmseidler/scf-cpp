@@ -58,39 +58,7 @@ std::vector<double *> Molecule::get_geom() {
     return para;
 }
 
-// calculates the electron density at a point in space
-/* double Molecule::rho(const Eigen::Vector3d &r) {
-    double rho = 0.0;
-
-    // calculate and evaluate the products of all basis functions (CGTOs)
-    for (int a = 0; a < nbas; a++) {
-        for (int b = 0; b < nbas; b++) {
-            // local variables for readability
-            Eigen::Vector3d auf_a = atoms[basis[a]->atid]->coord;
-            Eigen::Vector3d auf_b = atoms[basis[b]->atid]->coord;
-            double r_ab = distance(auf_a, auf_b);
-            double k_ij;
-
-            // psi_a * psi_b = sum_i(sum_j(phi_i * phi_j))
-            for (int i = 0; i < basis[a]->a_set.size(); i++) {
-                for (int j = 0; j < basis[b]->a_set.size(); j++) {
-                    double a_i = basis[a]->a_set[i];
-                    double a_j = basis[b]->a_set[j];
-                    double a_p = a_i + a_j; 
-
-                    k_ij = std::pow((2 * a_i * a_j / (M_PI * a_p)), 0.75) * std::exp(-r_ab * a_i * a_j /(a_p));
-                    rho += k_ij * exp(-a_p * distance(r, (a_i * auf_a + a_j * auf_b) / a_p));
-                }
-            }
-            // rho = sum_a(sum_b( p(a, b) * psi_a * psi_b) )
-            rho *= p(a, b);
-        }
-    }
-
-    return rho;
-} */
-
-// molecule constructor reads data from input file and sets up 1e and 2e integrals
+// molecule constructor reads data from input file and allocates atoms and basis functions
 Molecule::Molecule(const std::string &path) {
     // try to open input file
     std::ifstream infile;

@@ -12,6 +12,7 @@
 #include "solver.h"
 #include "optimizer.h"
 
+// solver energy change threshold
 const double THRESHOLD_E = 0.0005;
 
 // gets the setting for a given command line flag
